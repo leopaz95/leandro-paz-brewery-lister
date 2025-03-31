@@ -1,5 +1,6 @@
 import {
   Box,
+  Grid,
   Paper,
   Skeleton,
   Table,
@@ -12,7 +13,6 @@ import {
   TableSortLabel,
   TextField,
   Typography,
-  Grid,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useBreweries, useBreweriesMetadata } from '../api/queries';
@@ -43,11 +43,15 @@ export default function BreweriesPage() {
   });
 
   const isLoading = isLoadingBreweries || isLoadingMetadata;
+  const nameSearchError = !!searchNameTerm && searchNameTerm.length < 3;
+  const stateSearchError = !!searchStateTerm && searchStateTerm.length < 3;
 
   useEffect(() => {
     const handlerName = setTimeout(() => {
-      setDebouncedFilterName(searchNameTerm);
-      setPage(0);
+      if (!searchNameTerm || (searchNameTerm && searchNameTerm.length > 2)) {
+        setDebouncedFilterName(searchNameTerm);
+        setPage(0);
+      }
     }, 900);
 
     return () => {
@@ -57,8 +61,10 @@ export default function BreweriesPage() {
 
   useEffect(() => {
     const handlerState = setTimeout(() => {
-      setDebouncedFilterState(searchStateTerm);
-      setPage(0);
+      if (!searchStateTerm || (searchStateTerm && searchStateTerm.length > 2)) {
+        setPage(0);
+        setDebouncedFilterState(searchStateTerm);
+      }
     }, 900);
 
     return () => {
@@ -106,7 +112,7 @@ export default function BreweriesPage() {
           sx={{ maxWidth: 900, mt: 4, paddingTop: 1 }}
         >
           <Grid container spacing={{ xs: 1, md: 2 }} mb={2}>
-            <Grid size={{ md: 6, xs: 12 }}>
+            <Grid size={{ md: 6, xs: 12 }} mb={2}>
               <TextField
                 label='Search by Name'
                 fullWidth
@@ -114,10 +120,15 @@ export default function BreweriesPage() {
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
                   setSearchNameTerm(event.target.value)
                 }
-                sx={{ mb: 2, border: 'none' }}
+                error={nameSearchError}
               />
+              {nameSearchError && (
+                <Typography variant='body2' color='error' ml={1}>
+                  The length of the text must be greater than 2.
+                </Typography>
+              )}
             </Grid>
-            <Grid size={{ md: 6, xs: 12 }}>
+            <Grid size={{ md: 6, xs: 12 }} mb={2}>
               <TextField
                 label='Search by State'
                 fullWidth
@@ -125,8 +136,13 @@ export default function BreweriesPage() {
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
                   setSearchStateTerm(event.target.value)
                 }
-                sx={{ mb: 2, border: 'none' }}
+                error={stateSearchError}
               />
+              {stateSearchError && (
+                <Typography variant='body2' color='error' ml={1}>
+                  The length of the text must be greater than 2.
+                </Typography>
+              )}
             </Grid>
           </Grid>
           <Table>
