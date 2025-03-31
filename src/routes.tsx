@@ -1,4 +1,8 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import {
+  BrowserRouter,
+  createBrowserRouter,
+  RouterProvider,
+} from 'react-router-dom';
 import BreweriesPage from './pages/Breweries';
 import NotFoundPage from './pages/NotFoundPage';
 
@@ -8,5 +12,9 @@ const router = createBrowserRouter([
 ]);
 
 export default function AppRouter() {
-  return <RouterProvider router={router} />;
+  return (
+    <BrowserRouter basename='/leandro-paz-brewery-lister'>
+      <RouterProvider router={router} />
+    </BrowserRouter>
+  );
 }
